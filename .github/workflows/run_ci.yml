@@ -31,7 +31,7 @@ jobs:
         id: packer_build
         run: |
           cd packer
-          packer build wp.pkr.hcl >> build.log 2>&1
+          packer build -var "aws_access_key=${{ secrets.AWS_ACCESS_KEY }}" -var "aws_secret_key=${{ secrets.AWS_SECRET_KEY }}" wp.pkr.hcl >> build.log 2>&1
         continue-on-error: true
 
       - name: get actions status
