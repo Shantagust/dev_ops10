@@ -6,7 +6,7 @@ packer {
             }
         ansible = {
             version = ">= 1.0.0"
-            source = "github/hashicorp/ansible"
+            source = "github.com/hashicorp/ansible"
             }
     }
 }
