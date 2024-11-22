@@ -14,10 +14,10 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up AWS CLI
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: eu-central-1
           # audience: sts.amazonaws.com (не требуется в большинстве случаев)
 
@@ -33,6 +33,6 @@ jobs:
 
       - name: Send success message to Telegram
         run: |
-          TELEGRAM_TOKEN="your-telegram-bot-token"
-          TELEGRAM_CHAT_ID="your-chat-id"
+          TELEGRAM_TOKEN=${{ secrets.TG_TOKEN }}
+          TELEGRAM_CHAT_ID=${{ secrets.TG_CHAT_ID }}
           curl -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" -d "chat_id=${TELEGRAM_CHAT_ID}" -d "text=Build completed successfully for WordPress AMI."
