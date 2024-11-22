@@ -51,6 +51,7 @@ build {
 
     provisioner "shell" {
         inline = [
+            "sudo add-apt-repository universe -y",
             "sudo apt-get update -y",
             "sudo apt-get install -y apache2 mysql-server php php8.1-mysql libapache2-mod-php",
 
@@ -65,7 +66,7 @@ build {
             "sudo chmod -R 775 /var/www/html/",            # Обеспечение записи и выполнения для владельца и группы
             "tar xzvf /tmp/wordpress.tar.gz -C /var/www/html/",
             "sudo chown -R www-data:www-data /var/www/html/", # Назначение прав владельца для Apache
-            "sudo chmod -R 755 /var/www/html/"            # Ограничение прав для безопасности
+            "sudo chmod -R 755 /var/www/html/",           # Ограничение прав для безопасности
             "sudo mysql -e \"CREATE DATABASE wordpress; CREATE USER 'wp_user'@'localhost' IDENTIFIED BY 'your_password'; GRANT ALL PRIVILEGES ON wordpress.* TO 'wp_user'@'localhost'; FLUSH PRIVILEGES;\"",
             "sudo cp /var/www/html/wp-config-sample.php /var/www/html/wp-config.php",
             "sudo sed -i 's/define(\\'DB_NAME\\', \\'database_name_here\\');/define(\\'DB_NAME\\', \\'wordpress\\');/' /var/www/html/wp-config.php",
