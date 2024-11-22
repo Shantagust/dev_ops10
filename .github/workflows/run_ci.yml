@@ -25,13 +25,13 @@ jobs:
         id: packer_init
         run: |
           cd packer
-          packer init wp.pkr.hcl >> packer/init.log 2>&1
+          packer init wp.pkr.hcl >> init.log 2>&1
 
       - name: Build AMI
         id: packer_build
         run: |
           cd packer
-          packer build wp.pkr.hcl >> packer/build.log 2>&1
+          packer build wp.pkr.hcl >> build.log 2>&1
         continue-on-error: true
 
       - name: get actions status
@@ -64,10 +64,10 @@ jobs:
           *Packer init status*: $PACKER_INIT_STATUS
           *Packer build status*: $PACKER_BUILD_STATUS"
           if [[ "$PACKER_INIT_STATUS" == "Всё, конец ... ❌" ]]; then
-            MESSAGE="$MESSAGE\n\nINIT ERROR: $(cat packer/init.log)"
+            MESSAGE="$MESSAGE\n\nINIT ERROR: $(cat init.log)"
           fi
           if [[ "$PACKER_BUILD_STATUS" == "Всё, конец ... ❌" ]]; then
-            MESSAGE="$MESSAGE\n\nBUILD ERROR: $(cat packer/build.log)"
+            MESSAGE="$MESSAGE\n\nBUILD ERROR: $(cat build.log)"
           fi
           curl -s -X POST https://api.telegram.org/bot${{ env.TG_TOKEN }}/sendMessage \
           -d chat_id=${{ env.TG_CHAT_ID }} \
