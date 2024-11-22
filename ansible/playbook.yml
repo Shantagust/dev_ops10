@@ -1,16 +1,18 @@
 ---
-- name: Установка WordPress
+- name: Установка пакетов
   hosts: all
   become: yes
   tasks:
     - name: Установка Apache, MySQL и PHP
-      yum:
+      apt:
         name:
-          - httpd
+          - apache2
           - mysql-server
           - php
-          - php-mysqlnd
+          - php-mysql
         state: present
+        update_cache: yes
+        use_backend: apt
 
     - name: Запуск Apache и MySQL
       service:
