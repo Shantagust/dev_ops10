@@ -67,11 +67,11 @@ build {
             "tar xzvf /tmp/wordpress.tar.gz -C /var/www/html/",
             "sudo chown -R www-data:www-data /var/www/html/",
             "sudo chmod -R 755 /var/www/html/",
-            "sudo mysql -e \"CREATE DATABASE wordpress; CREATE USER 'wp_user'@'localhost' IDENTIFIED BY 'your_password'; GRANT ALL PRIVILEGES ON wordpress.* TO 'wp_user'@'localhost'; FLUSH PRIVILEGES;\"",
+            "sudo mysql -e \"CREATE DATABASE wordpress; CREATE USER 'wp_user'@'localhost' IDENTIFIED BY 'SDFLB*#JMV(#@@LKEGS)'; GRANT ALL PRIVILEGES ON wordpress.* TO 'wp_user'@'localhost'; FLUSH PRIVILEGES;\"",
             "sudo cp /var/www/html/wp-config-sample.php /var/www/html/wp-config.php",
             "sudo sed -i 's/define(\\'DB_NAME\\', \\'database_name_here\\');/define(\\'DB_NAME\\', \\'wordpress\\');/' /var/www/html/wp-config.php",
             "sudo sed -i 's/define(\\'DB_USER\\', \\'username_here\\');/define(\\'DB_USER\\', \\'wp_user\\');/' /var/www/html/wp-config.php",
-            "sudo sed -i 's/define(\\'DB_PASSWORD\\', \\'password_here\\');/define(\\'DB_PASSWORD\\', \\'your_password\\');/' /var/www/html/wp-config.php"
+            "sudo sed -i 's/define(\\'DB_PASSWORD\\', \\'password_here\\');/define(\\'DB_PASSWORD\\', \\'SDFLB*#JMV(#@@LKEGS)\\');/' /var/www/html/wp-config.php"
             ]
         }
 
