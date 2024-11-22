@@ -4,6 +4,18 @@
   vars:
     ansible_python_interpreter: /usr/bin/python3
   tasks:
+    - name: Create security group for HTTP
+      amazon.aws.ec2_security_group:
+        name: "http-sg"
+        description: "Allow HTTP inbound traffic"
+        region: "eu-central-1"
+        rules:
+          - proto: tcp
+            ports:
+              - 80
+            cidr_ip: "0.0.0.0/0"
+        state: present
+
     - name: Check Install apache & php
       apt:
         name: "{{ item }}"

@@ -37,20 +37,19 @@ jobs:
       - name: get actions status
         id: get_status
         run: |
-          # Проверяем статусы шагов и сохраняем их в переменные
           PACKER_INIT_STATUS=$([[ '${{ steps.packer_init.outcome }}' == 'success' ]] && echo 'Собрано ✅' || echo 'Всё, конец ... ❌')
           PACKER_BUILD_STATUS=$([[ '${{ steps.packer_build.outcome }}' == 'success' ]] && echo 'Собрано ✅' || echo 'Всё, конец ... ❌')
-
+          
           # Записываем статусы в переменные окружения
           echo "PACKER_INIT_STATUS=$PACKER_INIT_STATUS" >> $GITHUB_ENV
           echo "PACKER_BUILD_STATUS=$PACKER_BUILD_STATUS" >> $GITHUB_ENV
-
+          
           # Если один из шагов не успешен, выводим ошибку
-          if [ '${{ steps.packer_init.outcome }}' != 'success' ]; then
+          if [[ '${{ steps.packer_init.outcome }}' != 'success' ]]; then
             echo "PACKER_INIT_ERROR=$(cat packer/init.log)" >> $GITHUB_ENV
           fi
-
-          if [ '${{ steps.packer_build.outcome }}' != 'success' ]; then
+          
+          if [[ '${{ steps.packer_build.outcome }}' != 'success' ]]; then
             echo "PACKER_BUILD_ERROR=$(cat packer/build.log)" >> $GITHUB_ENV
           fi
 
