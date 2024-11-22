@@ -61,12 +61,6 @@ jobs:
           MESSAGE="Build status💬:
           *Packer init status*: $PACKER_INIT_STATUS
           *Packer build status*: $PACKER_BUILD_STATUS"
-          if [[ "$PACKER_INIT_STATUS" == "Всё, конец ... ❌" ]]; then
-            MESSAGE="$MESSAGE\n\nINIT ERROR: $(cat packer/init.log)"
-          fi
-          if [[ "$PACKER_BUILD_STATUS" == "Всё, конец ... ❌" ]]; then
-            MESSAGE="$MESSAGE\n\nBUILD ERROR: $(cat packer/build.log)"
-          fi
           curl -s -X POST https://api.telegram.org/bot${{ env.TG_TOKEN }}/sendMessage \
           -d chat_id=${{ env.TG_CHAT_ID }} \
           -d parse_mode=Markdown \
