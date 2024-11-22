@@ -25,13 +25,13 @@ jobs:
         id: packer_init
         run: |
           cd packer
-          packer init wp.pkr.hcl >> packer_init.log 2>&1
+          packer init wp.pkr.hcl >> init.log 2>&1
 
       - name: Build AMI
         id: packer_build
         run: |
           cd packer
-          packer build wp.pkr.hcl >> packer_build.log 2>&1
+          packer build wp.pkr.hcl >> build.log 2>&1
         continue-on-error: true
 
       - name: get actions status
