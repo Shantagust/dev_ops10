@@ -31,7 +31,7 @@ jobs:
         id: packer_build
         run: |
           cd packer
-          packer build wp.pkr.hcl
+          PACKER_LOG=1 packer build wp.pkr.hcl
         continue-on-error: true
 
       - name: get actions status
