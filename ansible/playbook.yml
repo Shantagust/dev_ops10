@@ -1,0 +1,22 @@
+- name: Configure WP Server
+  hosts: all
+  become: true
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  tasks:
+    - name: Check Install apache & php
+      apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+
+      loop:
+        - apache2
+        - php
+        - php-mysql
+
+    - name: Run apache2
+      systemd:
+        name: apache2
+        state: started
+        enabled: yes
