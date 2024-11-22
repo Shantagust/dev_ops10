@@ -60,9 +60,12 @@ build {
             "sudo systemctl enable mysql",
 
             "wget https://wordpress.org/latest.tar.gz -O /tmp/wordpress.tar.gz",
+            "sudo mkdir -p /var/www/html/",                # Создание каталога, если он не существует
+            "sudo chown -R $USER:$USER /var/www/html/",    # Временное предоставление прав текущему пользователю
+            "sudo chmod -R 775 /var/www/html/",            # Обеспечение записи и выполнения для владельца и группы
             "tar xzvf /tmp/wordpress.tar.gz -C /var/www/html/",
-            "sudo chown -R www-data:www-data /var/www/html/",
-            "sudo chmod -R 755 /var/www/html/",
+            "sudo chown -R www-data:www-data /var/www/html/", # Назначение прав владельца для Apache
+            "sudo chmod -R 755 /var/www/html/"            # Ограничение прав для безопасности
             "sudo mysql -e \"CREATE DATABASE wordpress; CREATE USER 'wp_user'@'localhost' IDENTIFIED BY 'your_password'; GRANT ALL PRIVILEGES ON wordpress.* TO 'wp_user'@'localhost'; FLUSH PRIVILEGES;\"",
             "sudo cp /var/www/html/wp-config-sample.php /var/www/html/wp-config.php",
             "sudo sed -i 's/define(\\'DB_NAME\\', \\'database_name_here\\');/define(\\'DB_NAME\\', \\'wordpress\\');/' /var/www/html/wp-config.php",
