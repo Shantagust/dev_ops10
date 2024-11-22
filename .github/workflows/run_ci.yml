@@ -1,69 +1,71 @@
-name: build project
+name: Build Project
+
 on:
   push:
     branches:
       - main
 
-build:
-  name: create ami and TG NOTIFY
-  runs-on: ubuntu-latest
+jobs:
+  build:
+    name: create ami and TG NOTIFY
+    runs-on: ubuntu-latest
 
-  steps:
-    - name: Check git repository
-      uses: actions/checkout@v3
+    steps:
+      - name: Check git repository
+        uses: actions/checkout@v3
 
-    - name: Set connect to AWS CLI
-      uses: aws-actions/configure-aws-credentials@v3
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-        aws-region: eu-central-1
+      - name: Set connect to AWS CLI
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: eu-central-1
 
-    - name: Init Packer
-      id: packer_init
-      run: |
-        cd packer
-        packer init wp.pkr.hcl > init.log 2>&1 || exit 1
+      - name: Init Packer
+        id: packer_init
+        run: |
+          cd packer
+          packer init wp.pkr.hcl > init.log 2>&1 || exit 1
 
-    - name: Build AMI
-      id: packer_build
-      run: |
-        cd packer
-        packer build wp.pkr.hcl > build.log 2>&1 || exit 1
-      continue-on-error: true
+      - name: Build AMI
+        id: packer_build
+        run: |
+          cd packer
+          packer build wp.pkr.hcl > build.log 2>&1 || exit 1
+        continue-on-error: true
 
-    - name: get actions status
-      id: get_status
-      run: |
-        PACKER_INIT_STATUS=$([[ '${{ steps.packer_init.outcome }}' == 'success' ]] && echo 'Собрано ✅' || echo 'Всё, конец ... ❌')
-        PACKER_BUILD_STATUS=$([[ '${{ steps.packer_build.outcome }}' == 'success' ]] && echo 'Собрано ✅' || echo 'Всё, конец ... ❌')
-        echo "PACKER_INIT_STATUS=$PACKER_INIT_STATUS" >> $GITHUB_ENV
-        echo "PACKER_BUILD_STATUS=$PACKER_BUILD_STATUS" >> $GITHUB_ENV
+      - name: get actions status
+        id: get_status
+        run: |
+          PACKER_INIT_STATUS=$([[ '${{ steps.packer_init.outcome }}' == 'success' ]] && echo 'Собрано ✅' || echo 'Всё, конец ... ❌')
+          PACKER_BUILD_STATUS=$([[ '${{ steps.packer_build.outcome }}' == 'success' ]] && echo 'Собрано ✅' || echo 'Всё, конец ... ❌')
+          echo "PACKER_INIT_STATUS=$PACKER_INIT_STATUS" >> $GITHUB_ENV
+          echo "PACKER_BUILD_STATUS=$PACKER_BUILD_STATUS" >> $GITHUB_ENV
+  
+          if [[ '${{ steps.packer_init.outcome }}' != 'success' ]]; then
+            echo "PACKER_INIT_ERROR=$(cat packer/init.log)" >> $GITHUB_ENV
+          fi
+  
+          if [[ '${{ steps.packer_build.outcome }}' != 'success' ]]; then
+            echo "PACKER_BUILD_ERROR=$(cat packer/build.log)" >> $GITHUB_ENV
+          fi
 
-        if [[ '${{ steps.packer_init.outcome }}' != 'success' ]]; then
-          echo "PACKER_INIT_ERROR=$(cat packer/init.log)" >> $GITHUB_ENV
-        fi
-
-        if [[ '${{ steps.packer_build.outcome }}' != 'success' ]]; then
-          echo "PACKER_BUILD_ERROR=$(cat packer/build.log)" >> $GITHUB_ENV
-        fi
-
-    - name: TG Notification
-      if: always()
-      env:
-        TG_TOKEN: ${{ secrets.TG_TOKEN }}
-        TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
-      run: |
-        MESSAGE="Build status💬:
-        *Packer init status*: $PACKER_INIT_STATUS
-        *Packer build status*: $PACKER_BUILD_STATUS"
-        if [[ "$PACKER_INIT_STATUS" == "Всё, конец ... ❌" ]]; then
-          MESSAGE="$MESSAGE\n\nINIT ERROR: $(cat packer/init.log)"
-        fi
-        if [[ "$PACKER_BUILD_STATUS" == "Всё, конец ... ❌" ]]; then
-          MESSAGE="$MESSAGE\n\nBUILD ERROR: $(cat packer/build.log)"
-        fi
-        curl -s -X POST https://api.telegram.org/bot${{ env.TG_TOKEN }}/sendMessage \
-        -d chat_id=${{ env.TG_CHAT_ID }} \
-        -d parse_mode=Markdown \
-        -d text="$MESSAGE"
+      - name: TG Notification
+        if: always()
+        env:
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
+        run: |
+          MESSAGE="Build status💬:
+          *Packer init status*: $PACKER_INIT_STATUS
+          *Packer build status*: $PACKER_BUILD_STATUS"
+          if [[ "$PACKER_INIT_STATUS" == "Всё, конец ... ❌" ]]; then
+            MESSAGE="$MESSAGE\n\nINIT ERROR: $(cat packer/init.log)"
+          fi
+          if [[ "$PACKER_BUILD_STATUS" == "Всё, конец ... ❌" ]]; then
+            MESSAGE="$MESSAGE\n\nBUILD ERROR: $(cat packer/build.log)"
+          fi
+          curl -s -X POST https://api.telegram.org/bot${{ env.TG_TOKEN }}/sendMessage \
+          -d chat_id=${{ env.TG_CHAT_ID }} \
+          -d parse_mode=Markdown \
+          -d text="$MESSAGE"
