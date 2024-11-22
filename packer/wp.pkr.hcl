@@ -45,7 +45,7 @@ source "amazon-ebs" "wordpress" {
 }
 
 build {
-    source = ["source.amazon-ebs.wordpress"]
+    sources = ["source.amazon-ebs.wordpress"]
 
     provisioner "shell" {
         inline = [
