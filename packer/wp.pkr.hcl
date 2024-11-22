@@ -53,20 +53,20 @@ build {
         inline = [
             "sudo add-apt-repository universe -y",
             "sudo apt-get update -y",
-            "sudo apt-get install -y apache2 mysql-server php php8.1-mysql libapache2-mod-php",
+            "sudo apt-get install -y  python3 python3-pip apache2 mysql-server php-mysql libapache2-mod-php",
 
             "sudo systemctl start apache2",
-            "sudo systemctl enable apache2",
+            "sudo systemctl enable --now apache2",
             "sudo systemctl start mysql",
-            "sudo systemctl enable mysql",
+            "sudo systemctl enable --now mysql",
 
             "wget https://wordpress.org/latest.tar.gz -O /tmp/wordpress.tar.gz",
-            "sudo mkdir -p /var/www/html/",                # Создание каталога, если он не существует
-            "sudo chown -R $USER:$USER /var/www/html/",    # Временное предоставление прав текущему пользователю
-            "sudo chmod -R 775 /var/www/html/",            # Обеспечение записи и выполнения для владельца и группы
+            "sudo mkdir -p /var/www/html/",
+            "sudo chown -R $USER:$USER /var/www/html/",
+            "sudo chmod -R 775 /var/www/html/",
             "tar xzvf /tmp/wordpress.tar.gz -C /var/www/html/",
-            "sudo chown -R www-data:www-data /var/www/html/", # Назначение прав владельца для Apache
-            "sudo chmod -R 755 /var/www/html/",           # Ограничение прав для безопасности
+            "sudo chown -R www-data:www-data /var/www/html/",
+            "sudo chmod -R 755 /var/www/html/",
             "sudo mysql -e \"CREATE DATABASE wordpress; CREATE USER 'wp_user'@'localhost' IDENTIFIED BY 'your_password'; GRANT ALL PRIVILEGES ON wordpress.* TO 'wp_user'@'localhost'; FLUSH PRIVILEGES;\"",
             "sudo cp /var/www/html/wp-config-sample.php /var/www/html/wp-config.php",
             "sudo sed -i 's/define(\\'DB_NAME\\', \\'database_name_here\\');/define(\\'DB_NAME\\', \\'wordpress\\');/' /var/www/html/wp-config.php",
