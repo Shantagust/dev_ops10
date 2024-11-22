@@ -16,11 +16,6 @@ variable "ami_prefix" {
 }
 
 
-variable "region" {
-  type    = string
-  default = "eu-central-1"
-}
-
 variable "instance_type" {
   type    = string
   default = "t2.micro"
@@ -41,10 +36,11 @@ source "amazon-ebs" "wordpress" {
             virtualization-type = "hvm"
             }
         }
+
         owners = ["099720109477"]
         most_recent = true
 
-        instance.type = "t2.micro"
+        instance.type = var.instance_type
         ssh_username = var.ssh_username
         ami_name = "${var.ami_prefix} - ${uuidv4()}"
 }
