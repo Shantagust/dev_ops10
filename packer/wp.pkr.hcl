@@ -15,6 +15,9 @@ variable "ami_prefix" {
     default = "wp-serv"
 }
 
+variable "region"{
+    default = "eu-central-1"
+    }
 
 variable "instance_type" {
   type    = string
@@ -28,7 +31,6 @@ variable "ssh_username" {
 
 source "amazon-ebs" "wordpress" {
     region = var.region
-
     source_ami_filter {
         filters = {
             name = "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"
