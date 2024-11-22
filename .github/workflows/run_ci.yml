@@ -1,9 +1,13 @@
+name: build project
+on:
+  push:
+    branches:
+      - main
+
 build:
   name: create ami and TG NOTIFY
   runs-on: ubuntu-latest
 
-  on:
-      workflow_dispatch:
   steps:
     - name: Check git repository
       uses: actions/checkout@v3
