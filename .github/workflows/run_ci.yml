@@ -21,6 +21,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: eu-central-1
 
+      - name: Validate Packer configuration
+        run: |
+          cd packer
+          packer validate wp.pkr.hcl
+
       - name: Init Packer
         id: packer_init
         run: |
