@@ -54,7 +54,7 @@ build {
             "sudo apt-get update -y",
             "sudo apt-get install -y python3 python3-pip",
             "sudo apt-get install -y apache2 php php-mysql",
-            "sudo systemctl enable apache2"
+            "sudo systemctl enable apache2",
             "sudo systemctl start apache2"
             ]
         }
