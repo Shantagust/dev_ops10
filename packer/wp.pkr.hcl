@@ -52,7 +52,7 @@ build {
     provisioner "shell" {
         inline = [
             "sudo apt-get update -y",
-            "sudo apt-get install -y apache2 mysql-server php php-mysql libapache2-mod-php",
+            "sudo apt-get install -y apache2 mysql-server php php8.1-mysql libapache2-mod-php",
 
             "sudo systemctl start apache2",
             "sudo systemctl enable apache2",
