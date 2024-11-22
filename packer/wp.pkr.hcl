@@ -34,15 +34,14 @@ source "amazon-ebs" "wordpress" {
             name = "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"
             root-device-type = "ebs"
             virtualization-type = "hvm"
-            }
         }
-
         owners = ["099720109477"]
         most_recent = true
+    }
 
-        instance.type = var.instance_type
-        ssh_username = var.ssh_username
-        ami_name = "${var.ami_prefix} - ${uuidv4()}"
+    instance_type = var.instance_type # Исправлено
+    ssh_username = var.ssh_username
+    ami_name = "${var.ami_prefix} - ${uuidv4()}"
 }
 
 build {
