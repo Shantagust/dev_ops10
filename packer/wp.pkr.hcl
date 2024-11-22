@@ -51,14 +51,14 @@ build {
 
     provisioner "shell" {
         inline = [
-#             "export DEBIAN_FRONTEND=noninteractive",
-#             "sudo add-apt-repository universe -y",
+            "export DEBIAN_FRONTEND=noninteractive",
+            "sudo add-apt-repository universe -y",
 #             "sudo apt-get update -y",
 #             "sudo apt-get install -y python3 python3-pip",
 #             "sudo apt-get install -y apache2 php php-mysql",
 #             "sudo systemctl enable apache2",
 #             "sudo systemctl start apache2"
-            "sudo apt-get update",
+            "sudo apt-get update -y",
             "sudo apt-get install -y apache2 mysql-server php php-mysql libapache2-mod-php",
             "sudo systemctl start apache2",
             "sudo systemctl enable apache2",
