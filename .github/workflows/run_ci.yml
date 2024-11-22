@@ -19,6 +19,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-central-1
+          # audience: sts.amazonaws.com (не требуется в большинстве случаев)
 
       - name: Set up Packer
         uses: hashicorp/setup-packer@v2
@@ -32,6 +33,6 @@ jobs:
 
       - name: Send success message to Telegram
         run: |
-          TELEGRAM_TOKEN=${{ secrets.TG_TOKEN }}
-          TELEGRAM_CHAT_ID=${{ secrets.TG_CHAT_ID }}
+          TELEGRAM_TOKEN="your-telegram-bot-token"
+          TELEGRAM_CHAT_ID="your-chat-id"
           curl -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" -d "chat_id=${TELEGRAM_CHAT_ID}" -d "text=Build completed successfully for WordPress AMI."
