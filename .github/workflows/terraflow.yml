@@ -41,7 +41,7 @@ jobs:
         cd terraform
         terraform apply -var "aws_access_key_id=${{ secrets.AWS_ACCESS_KEY }}" -var "aws_secret_access_key=${{ secrets.AWS_SECRET_KEY }}" -auto-approve
         
-        INSTANCE_IP=$(terraform output -raw instance_ip | sed 's/[^0-9.]//g')
+        INSTANCE_IP=$(terraform output -raw instance_ip | tr -d '\n' | sed 's/[^0-9.]//g')
         echo "INSTANCE_IP=$INSTANCE_IP" >> $GITHUB_ENV
 
     - name: Debug INSTANCE_IP
