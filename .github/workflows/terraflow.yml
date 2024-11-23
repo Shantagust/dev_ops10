@@ -41,7 +41,7 @@ jobs:
       id: apply
       run: |
         cd terraform
-        terraform apply -auto-approve
+        terraform apply -var "aws_access_key_id=${{ secrets.AWS_ACCESS_KEY }}" -var "aws_secret_access_key=${{ secrets.AWS_SECRET_KEY }}"  -auto-approve
         echo "INSTANCE_IP=$(terraform output -raw instance_ip)" >> $GITHUB_ENV
 
     - name: Test HTTP Server
