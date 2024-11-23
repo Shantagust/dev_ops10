@@ -46,6 +46,7 @@ jobs:
 
     - name: Test HTTP Server
       run: |
+        echo "Testing with IP: $INSTANCE_IP"
         chmod +x ./scripts/test.sh
         ./scripts/test.sh $INSTANCE_IP
 
