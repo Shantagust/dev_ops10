@@ -41,10 +41,19 @@ jobs:
         cd terraform
         terraform apply -var "aws_access_key_id=${{ secrets.AWS_ACCESS_KEY }}" -var "aws_secret_access_key=${{ secrets.AWS_SECRET_KEY }}" -auto-approve
         
+        # Извлекаем IP-адрес из вывода Terraform
         IP_OUTPUT=$(terraform output -raw instance_ip)
         echo "Terraform output: $IP_OUTPUT"
+        
+        # Очистим вывод и сохраним IP в переменную
         INSTANCE_IP=$(echo $IP_OUTPUT | tr -d '\n' | sed 's/[^0-9.]//g')
+        
+        # Записываем IP-адрес в файл $GITHUB_ENV, чтобы передать его в следующие шаги
         echo "INSTANCE_IP=$INSTANCE_IP" >> $GITHUB_ENV
+
+    - name: Debug INSTANCE_IP
+      run: |
+        echo "INSTANCE_IP=${{ env.INSTANCE_IP }}"
 
     - name: Test HTTP Server
       run: |
