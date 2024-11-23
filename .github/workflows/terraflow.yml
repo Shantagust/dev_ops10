@@ -42,15 +42,28 @@ jobs:
         terraform apply -var "aws_access_key_id=${{ secrets.AWS_ACCESS_KEY }}" -var "aws_secret_access_key=${{ secrets.AWS_SECRET_KEY }}" -auto-approve
 
         # Wait to ensure the instance is fully provisioned
-        sleep 60
+        sleep 10
 
-        # Get the public IP and DNS from Terraform output
-        INSTANCE_IP=$(terraform output -raw instance_ip | sed 's/[^0-9.]//g' | sed 's/\.$//g')
-        INSTANCE_PUBLIC_DNS=$(terraform output -raw instance_public_dns | sed 's/\.$//g')
-
-        # Set instance IP and DNS as environment variables
-        echo "INSTANCE_IP=$INSTANCE_IP" >> $GITHUB_ENV
-        echo "INSTANCE_PUBLIC_DNS=$INSTANCE_PUBLIC_DNS" >> $GITHUB_ENV
+        
+        # Get the raw IP and DNS from Terraform output
+        INSTANCE_IP=$(terraform output -raw instance_ip)
+        INSTANCE_PUBLIC_DNS=$(terraform output -raw instance_public_dns)
+    
+        # Debug: Print raw IP and DNS
+        echo "Raw IP: $INSTANCE_IP"
+        echo "Raw DNS: $INSTANCE_PUBLIC_DNS"
+    
+        # Clean up IP address by removing invalid characters (non-numeric and non-dot characters)
+        INSTANCE_IP_CLEAN=$(echo $INSTANCE_IP | tr -cd '0-9.')
+        INSTANCE_PUBLIC_DNS_CLEAN=$(echo $INSTANCE_PUBLIC_DNS | sed 's/\.$//')
+    
+        # Debug: Print cleaned IP and DNS
+        echo "Cleaned IP: $INSTANCE_IP_CLEAN"
+        echo "Cleaned DNS: $INSTANCE_PUBLIC_DNS_CLEAN"
+    
+        # Save cleaned values to GitHub environment variables
+        echo "INSTANCE_IP=$INSTANCE_IP_CLEAN" >> $GITHUB_ENV
+        echo "INSTANCE_PUBLIC_DNS=$INSTANCE_PUBLIC_DNS_CLEAN" >> $GITHUB_ENV
 
     - name: Debug INSTANCE_IP and DNS
       run: |
