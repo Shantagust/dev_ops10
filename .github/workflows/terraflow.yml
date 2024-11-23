@@ -40,20 +40,28 @@ jobs:
       run: |
         cd terraform
         terraform apply -var "aws_access_key_id=${{ secrets.AWS_ACCESS_KEY }}" -var "aws_secret_access_key=${{ secrets.AWS_SECRET_KEY }}" -auto-approve
-        
-        sleep 60
-        INSTANCE_IP=$(terraform output -raw instance_ip | sed 's/[^0-9.]//g' | sed 's/\.$//g')
-        echo "INSTANCE_IP=$INSTANCE_IP" >> $GITHUB_ENV
 
-    - name: Debug INSTANCE_IP
+        # Wait to ensure the instance is fully provisioned
+        sleep 60
+
+        # Get the public IP and DNS from Terraform output
+        INSTANCE_IP=$(terraform output -raw instance_ip | sed 's/[^0-9.]//g' | sed 's/\.$//g')
+        INSTANCE_PUBLIC_DNS=$(terraform output -raw instance_public_dns | sed 's/\.$//g')
+
+        # Set instance IP and DNS as environment variables
+        echo "INSTANCE_IP=$INSTANCE_IP" >> $GITHUB_ENV
+        echo "INSTANCE_PUBLIC_DNS=$INSTANCE_PUBLIC_DNS" >> $GITHUB_ENV
+
+    - name: Debug INSTANCE_IP and DNS
       run: |
         echo "INSTANCE_IP=${{ env.INSTANCE_IP }}"
+        echo "INSTANCE_PUBLIC_DNS=${{ env.INSTANCE_PUBLIC_DNS }}"
 
     - name: Test HTTP Server
       run: |
-        echo "Testing with IP: $INSTANCE_IP"
+        echo "Testing with IP: $INSTANCE_IP and DNS: $INSTANCE_PUBLIC_DNS"
         chmod +x ./scripts/test.sh
-        ./scripts/test.sh $INSTANCE_IP
+        ./scripts/test.sh $INSTANCE_PUBLIC_DNS
 
     - name: Notify Telegram
       if: always()
