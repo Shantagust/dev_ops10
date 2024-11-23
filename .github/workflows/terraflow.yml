@@ -19,17 +19,29 @@ jobs:
       with:
         terraform_version: 1.5.0
 
+    - name: List Files for Debugging
+      run: |
+        echo "Working directory:"
+        pwd
+        echo "Files:"
+        ls -la
+
     - name: Terraform Init
-      run: terraform init
+      run: |
+        cd terraform
+        terraform init
 
     - name: Terraform Apply
       id: apply
       run: |
+        cd terraform
         terraform apply -auto-approve
         echo "INSTANCE_IP=$(terraform output -raw instance_ip)" >> $GITHUB_ENV
 
     - name: Test HTTP Server
-      run: ./test.sh $INSTANCE_IP
+      run: |
+        chmod +x ./scripts/test.sh
+        ./scripts/test.sh $INSTANCE_IP
 
     - name: Notify Telegram
       if: always()
