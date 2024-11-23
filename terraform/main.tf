@@ -10,12 +10,17 @@ provider "aws" {
 }
 
 resource "aws_instance" "web_server" {
-  ami           = "ami-0daf65a18bb5ab7a8"
+  ami           = "ami-0b0c836a737ee51d7"
   instance_type = "t2.micro"
   user_data = <<-EOF
               #!/bin/bash
-              echo "Hello, World!" > /var/www/html/index.html
-              nohup busybox httpd -f -p 8080 &
+              sudo apt update -y
+              sudo apt install -y nginx
+
+              echo "Hello from Nginx on Terraform!" > /var/www/html/index.html
+
+              systemctl start nginx
+              systemctl enable nginx
               EOF
   tags = {
     Name = "TerraformWebServer"
