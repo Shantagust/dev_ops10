@@ -3,8 +3,10 @@
   hosts: all
   become: yes
   tasks:
-    - name: Установка Python 3
-      raw: sudo apt-get update -y && sudo apt-get install -y python3
+    - name: Убедиться, что Python 3 установлен
+      package:
+        name: python3
+        state: present
 
     - name: Установка Apache, MySQL и PHP
       apt:
@@ -41,8 +43,17 @@
         dest: /var/www/html/
         remote_src: yes
 
+    - name: Проверка наличия папки WordPress
+      stat:
+        path: /var/www/html/wordpress
+      register: wordpress_folder
+
     - name: Перемещение содержимого WordPress в корень веб-сервера
-      command: mv /var/www/html/wordpress/* /var/www/html/
+      shell: |
+        if [ -d /var/www/html/wordpress ]; then
+          mv /var/www/html/wordpress/* /var/www/html/
+        fi
+      when: wordpress_folder.stat.exists and wordpress_folder.stat.isdir
 
     - name: Удаление лишней папки WordPress
       file:
