@@ -3,7 +3,7 @@ name: Deploy and Test Terraform
 on:
   push:
     branches:
-      - main
+      - terra
 
 jobs:
   terraform:
@@ -29,13 +29,13 @@ jobs:
         echo "INSTANCE_IP=$(terraform output -raw instance_ip)" >> $GITHUB_ENV
 
     - name: Test HTTP Server
-      run: ./test_http_server.sh $INSTANCE_IP
+      run: ./test.sh $INSTANCE_IP
 
     - name: Notify Telegram
       if: always()
       env:
-        TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-        CHAT_ID: ${{ secrets.CHAT_ID }}
+        TELEGRAM_TOKEN: ${{ secrets.TG_TOKEN }}
+        CHAT_ID: ${{ secrets.TG_CHAT_ID }}
       run: |
         STATUS="FAILED"
         if [ "${{ job.status }}" == "success" ]; then
