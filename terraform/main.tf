@@ -45,6 +45,7 @@ resource "aws_instance" "web_server" {
             sudo apt update -y
             sudo apt install -y nginx
             echo "Hello World" > /var/www/html/index.html
+            sudo systemctl status nginx || sudo systemctl restart nginx
             sudo systemctl start nginx
             sudo systemctl enable nginx
             EOF
