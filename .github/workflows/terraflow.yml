@@ -43,9 +43,8 @@ jobs:
         
         IP_OUTPUT=$(terraform output -raw instance_ip)
         echo "Terraform output: $IP_OUTPUT"
-      
-        INSTANCE_IP=$(terraform output -raw instance_ip | tr -d '\n' | sed 's/[^0-9.]//g')
-        echo "INSTANCE_IP=$INSTANCE_IP" >> $GITHUB_ENV\
+        INSTANCE_IP=$(echo $IP_OUTPUT | tr -d '\n' | sed 's/[^0-9.]//g')
+        echo "INSTANCE_IP=$INSTANCE_IP" >> $GITHUB_ENV
 
     - name: Test HTTP Server
       run: |
