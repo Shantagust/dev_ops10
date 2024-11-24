@@ -56,3 +56,7 @@ resource "aws_instance" "web" {
 output "public_ip" {
   value = try(aws_instance.web.public_ip, "")
 }
+
+output "instance_name" {
+  value = aws_instance.web.tags["Name"]
+}

@@ -36,6 +36,12 @@ jobs:
         run: |
           terraform apply -var "aws_access_key_id=${{ secrets.AWS_ACCESS_KEY }}" -var "aws_secret_access_key=${{ secrets.AWS_SECRET_KEY }}" -auto-approve
 
+      - name: Get Instance Name
+        id: get_instance_name
+        run: |
+          INSTANCE_NAME=$(terraform output -raw instance_name)
+          echo "INSTANCE_NAME=$INSTANCE_NAME" >> $GITHUB_ENV
+
       - name: Notify Telegram
         if: always()
         env:
@@ -49,10 +55,10 @@ jobs:
             STATUS="SUCCESSFUL"
           fi          
           if [ "${{ steps.init_terra.outcome }}" == "success" ]; then
-            INIT_STATUS "OK ✅"
+            INIT_STATUS="OK ✅"
           fi          
           if [ "${{ steps.apply_terra.outcome }}" == "success" ]; then
-            APPLY_STATUS "OK ✅"
+            APPLY_STATUS="OK ✅"
           fi
           curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
             -d chat_id="$CHAT_ID" \
@@ -61,3 +67,4 @@ jobs:
           Init Terra: $INIT_STATUS
           Apply Terra: $APPLY_STATUS
           Status: ${{ job.status }}
+          Instance: ${{ env.INSTANCE_NAME }}
