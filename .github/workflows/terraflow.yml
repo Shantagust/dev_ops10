@@ -62,6 +62,6 @@ jobs:
             -d chat_id="$CHAT_ID" \
             -d text="Pipeline $STATUS:
           
-          Init Terra: $INIT_STATUS
-          Apply Terra: $APPLY_STATUS
-          Build status: $TASK_STATUS
+            Init Terra: $INIT_STATUS
+            Apply Terra: $APPLY_STATUS
+            Build status: $TASK_STATUS
