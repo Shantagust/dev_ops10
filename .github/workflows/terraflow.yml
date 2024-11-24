@@ -39,7 +39,7 @@ jobs:
         id: get_ip
         working-directory: terraform/
         run: |
-          IP=$(terraform output -raw public_ip | sed 's/::debug.*//')
+          IP=$(terraform output -raw public_ip | sed 's/::debug.*//' | tr -d '\n')
           echo "IP Address: $IP"
           echo "IP=$IP" >> $GITHUB_ENV
 
