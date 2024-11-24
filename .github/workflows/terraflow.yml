@@ -32,7 +32,9 @@ jobs:
       - name: Get Public IP
         id: get_ip
         working-directory: terraform/
-        run: echo "IP=$(terraform output -raw public_ip)" >> $GITHUB_ENV
+        run: |
+          IP=$(terraform output -raw public_ip)
+          echo "IP=${IP}" >> $GITHUB_ENV
 
       - name: Test Nginx Server
         run: curl -f http://$IP || exit 1
