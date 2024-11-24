@@ -33,7 +33,8 @@ jobs:
         id: get_ip
         working-directory: terraform/
         run: |
-          IP=$(terraform output -raw public_ip | tr -d '\n')
+          IP_OUTPUT=$(terraform output ip_address)
+          IP=$(echo "$IP_OUTPUT" | sed -E 's/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+).*/\1/')
           echo "IP=${IP}" >> $GITHUB_ENV
 
       - name: Notify Telegram
