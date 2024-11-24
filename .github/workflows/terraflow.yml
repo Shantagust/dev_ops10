@@ -48,23 +48,26 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TG_TOKEN }}
           CHAT_ID: ${{ secrets.TG_CHAT_ID }}
         run: |
-          STATUS="FAILED"
+          STATUS="❌ FAILED ❌"
           INIT_STATUS="❌ FAILED ❌"
           APPLY_STATUS="❌ FAILED ❌"
+          TASK_STATUS="❌ FAILED ❌"
           if [ "${{ job.status }}" == "success" ]; then
             STATUS="SUCCESSFUL"
           fi          
           if [ "${{ steps.init_terra.outcome }}" == "success" ]; then
             INIT_STATUS="OK ✅"
-          fi          
+          fi         
           if [ "${{ steps.apply_terra.outcome }}" == "success" ]; then
             APPLY_STATUS="OK ✅"
-          fi
+          fi     
+          if [ "${{ job.status }}" == "success" ]; then
+            TASK_STATUS="Done ✅"
+          fi      
           curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
             -d chat_id="$CHAT_ID" \
             -d text="Pipeline $STATUS:
           
           Init Terra: $INIT_STATUS
           Apply Terra: $APPLY_STATUS
-          Status: ${{ job.status }}
-          Instance: ${{ env.INSTANCE_NAME }}
+          Status: $TASK_STATUS
