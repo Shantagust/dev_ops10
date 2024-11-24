@@ -37,7 +37,8 @@ jobs:
           echo "IP=${IP}" >> $GITHUB_ENV
 
       - name: Debug Public IP
-        run: echo "Public IP: ${{ env.IP }}"
+        run:
+          echo "Public IP: ${{ env.IP }}"
 
       - name: Notify Telegram
         if: always()
