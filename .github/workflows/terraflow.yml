@@ -6,60 +6,47 @@ on:
       - terra
 
 jobs:
-  terraform:
-    name: Deploy AMI with Terraform
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v2
-      with:
-        terraform_version: 1.5.0
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.4.6
 
-    - name: Setup AWS Credentials
-      run: |
-        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY }}
-        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_KEY }}
-        aws configure set region eu-central-1
+      - name: Initialize Terraform
+        working-directory: terraform/
+        run: terraform init
 
-    - name: Terraform Init
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
-      run: |
-        cd terraform
-        terraform init
+      - name: Apply Terraform
+        working-directory: terraform/
+        run: terraform apply -auto-approve
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-    - name: Terraform Apply
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
-      run: |
-        cd terraform
-        terraform apply -var "aws_access_key_id=${{ secrets.AWS_ACCESS_KEY }}" -var "aws_secret_access_key=${{ secrets.AWS_SECRET_KEY }}" -auto-approve
+      - name: Get Public IP
+        id: get_ip
+        working-directory: terraform/
+        run: echo "IP=$(terraform output -raw public_ip)" >> $GITHUB_ENV
 
-    - name: Extract Public IP
-      id: get_ip
-      working-directory: terraform/
-      run: echo "IP=$(terraform output -raw public_ip)" >> $GITHUB_ENV
+      - name: Test Nginx Server
+        run: curl -f http://$IP || exit 1
 
-    # 6. Проверяем доступность HTTP-сервера
-    - name: Test HTTP Server
-      run: curl -f http://$IP || exit 1
-
-    - name: Notify Telegram
-      if: always()
-      env:
-        TELEGRAM_TOKEN: ${{ secrets.TG_TOKEN }}
-        CHAT_ID: ${{ secrets.TG_CHAT_ID }}
-      run: |
-        STATUS="FAILED"
-        if [ "${{ job.status }}" == "success" ]; then
-          STATUS="SUCCESSFUL"
-        fi
-        curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
-          -d chat_id="$CHAT_ID" \
-          -d text="Pipeline $STATUS: Deploy and test completed with result ${{ job.status }}."
+      - name: Notify Telegram
+        if: always()
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TG_TOKEN }}
+          CHAT_ID: ${{ secrets.TG_CHAT_ID }}
+        run: |
+          STATUS="FAILED"
+          if [ "${{ job.status }}" == "success" ]; then
+            STATUS="SUCCESSFUL"
+          fi
+          curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
+            -d chat_id="$CHAT_ID" \
+            -d text="Pipeline $STATUS: Deploy and test completed with result ${{ job.status }}."

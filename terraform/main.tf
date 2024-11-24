@@ -7,7 +7,7 @@ provider "aws" {
   secret_key = var.aws_secret_access_key
 }
 
-resource "aws_security_group" "web_server_sg" {
+resource "aws_security_group" "web" {
   name_prefix = "web-server-sg"
 
   ingress {
@@ -32,31 +32,24 @@ resource "aws_security_group" "web_server_sg" {
   }
 }
 
-resource "aws_instance" "web_server" {
+resource "aws_instance" "web" {
   ami           = "ami-0b0c836a737ee51d7"
   instance_type = "t2.micro"
-
-  # Подключение Security Group
   vpc_security_group_ids = [aws_security_group.web_server_sg.id]
-
-  # Пользовательские данные для запуска
   user_data = <<-EOF
-            #!/bin/bash
-            sudo apt update -y
-            sudo apt install -y nginx
-            echo "Hello World" > /var/www/html/index.html
-            sudo systemctl status nginx || sudo systemctl restart nginx
-            sudo systemctl start nginx
-            sudo systemctl enable nginx
-            EOF
-
+              #!/bin/bash
+              sudo apt-get update -y
+              sudo apt-get install -y nginx
+              sudo systemctl start nginx
+              sudo systemctl enable nginx
+              EOF
   timeouts {
     create = "10m"
     delete = "5m"
   }
 
   tags = {
-    Name = "TerraformWebServer"
+    Name = "Terraform-Web-Server"
   }
 }
 
