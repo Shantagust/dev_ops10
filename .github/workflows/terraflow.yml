@@ -36,10 +36,6 @@ jobs:
           IP=$(terraform output -raw public_ip | tr -d '\n')
           echo "IP=${IP}" >> $GITHUB_ENV
 
-      - name: Debug Public IP
-        run:
-          echo "Public IP: ${{ env.IP }}"
-
       - name: Notify Telegram
         if: always()
         env:
@@ -52,4 +48,4 @@ jobs:
           fi
           curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
             -d chat_id="$CHAT_ID" \
-            -d text="Pipeline $STATUS: Deploy and test completed with result ${{ job.status }}."
+            -d text="Pipeline $STATUS: Deploy and test completed with result ${{ job.status }}. instance ip: ${{ env.IP}}"
