@@ -60,4 +60,4 @@ jobs:
           Apply Terra: ${{ steps.apply_terra.outcome }}
           Status: ${{ job.status }}
           
-          Instance ip: ${{ INSTANCE_IP }}"
+          Instance ip: $INSTANCE_IP"
