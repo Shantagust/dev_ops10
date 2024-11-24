@@ -61,7 +61,7 @@ jobs:
           curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
             -d chat_id="$CHAT_ID" \
             -d text="Pipeline $STATUS:
-          
+
             Init Terra: $INIT_STATUS
             Apply Terra: $APPLY_STATUS
-            Build status: $TASK_STATUS
+            Build status: $TASK_STATUS"
