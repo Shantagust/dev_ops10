@@ -6,7 +6,7 @@ on:
       - terra
 
 jobs:
-  deploy:
+  start_ami_and_notify_TG:
     runs-on: ubuntu-latest
 
     steps:
