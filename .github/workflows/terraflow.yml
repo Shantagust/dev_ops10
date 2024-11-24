@@ -39,7 +39,7 @@ jobs:
         id: get_ip
         working-directory: terraform/
         run: |
-          terraform output -raw public_ip > outputs.tf
+          echo "INSTANCE_IP=$(terraform output public_ip)" >> $GITHUB_ENV
 
       - name: Notify Telegram
         if: always()
