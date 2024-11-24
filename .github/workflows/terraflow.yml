@@ -39,9 +39,7 @@ jobs:
         id: get_ip
         working-directory: terraform/
         run: |
-          IP=$(terraform output -raw public_ip | sed 's/::debug.*//' | tr -d '\n')
-          echo "IP Address: $IP"
-          echo "IP=$IP" >> $GITHUB_ENV
+          terraform output -raw public_ip > outputs.tf
 
       - name: Notify Telegram
         if: always()
@@ -49,6 +47,7 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TG_TOKEN }}
           CHAT_ID: ${{ secrets.TG_CHAT_ID }}
         run: |
+          INSTANCE_IP=$(cat outputs.tf)
           STATUS="FAILED"
           if [ "${{ job.status }}" == "success" ]; then
             STATUS="SUCCESSFUL"
@@ -61,4 +60,4 @@ jobs:
           Apply Terra: ${{ steps.apply_terra.outcome }}
           Status: ${{ job.status }}
           
-          Instance ip: ${{ env.IP}}"
+          Instance ip: ${{ INSTANCE_IP }}"
