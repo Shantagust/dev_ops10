@@ -35,7 +35,7 @@ resource "aws_security_group" "web" {
 resource "aws_instance" "web" {
   ami           = "ami-0b0c836a737ee51d7"
   instance_type = "t2.micro"
-  vpc_security_group_ids = [aws_security_group.web_server_sg.id]
+  vpc_security_group_ids = [aws_security_group.web.id]
   user_data = <<-EOF
               #!/bin/bash
               sudo apt-get update -y
