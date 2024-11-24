@@ -47,7 +47,6 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TG_TOKEN }}
           CHAT_ID: ${{ secrets.TG_CHAT_ID }}
         run: |
-          INSTANCE_IP=$(cat outputs.tf)
           STATUS="FAILED"
           if [ "${{ job.status }}" == "success" ]; then
             STATUS="SUCCESSFUL"
@@ -60,4 +59,4 @@ jobs:
           Apply Terra: ${{ steps.apply_terra.outcome }}
           Status: ${{ job.status }}
           
-          Instance ip: $INSTANCE_IP"
+          Instance ip: ${{env.INSTANCE_IP}}"
