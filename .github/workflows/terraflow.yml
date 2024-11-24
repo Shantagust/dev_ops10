@@ -13,10 +13,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Set TF_LOG to ERROR (disable debug output)
-        run: |
-          echo "TF_LOG=ERROR" >> $GITHUB_ENV
-
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
@@ -39,7 +35,8 @@ jobs:
         id: get_ip
         working-directory: terraform/
         run: |
-          IP=$(terraform output -raw public_ip | sed 's/::debug.*//')
+          IP=$(terraform output -raw public_ip | tr -d '\n')
+          echo "IP Address: $IP"
           echo "IP=${IP}" >> $GITHUB_ENV
 
       - name: Notify Telegram
