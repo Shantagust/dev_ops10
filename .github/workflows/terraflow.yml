@@ -42,7 +42,7 @@ jobs:
         env:
           TF_LOG: ERROR
         run: |
-          INSTANCE_IP=$(terraform output -raw public_ip | sed 's/::debug.*//' | tr -d '[:space:]')
+          INSTANCE_IP=$(terraform output -raw public_ip | sed 's/::debug.*//')
           echo "INSTANCE_IP=$INSTANCE_IP" >> $GITHUB_ENV
 
       - name: Notify Telegram
@@ -52,15 +52,23 @@ jobs:
           CHAT_ID: ${{ secrets.TG_CHAT_ID }}
         run: |
           STATUS="FAILED"
+          INIT_STATUS="❌ FAILED ❌"
+          APPLY_STATUS="❌ FAILED ❌"
           if [ "${{ job.status }}" == "success" ]; then
             STATUS="SUCCESSFUL"
+          fi          
+          if [ "${{ steps.init_terra.outcome }}" == "success" ]; then
+            INIT_STATUS "OK ✅"
+          fi          
+          if [ "${{ steps.apply_terra.outcome }}" == "success" ]; then
+            APPLY_STATUS "OK ✅"
           fi
           curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
             -d chat_id="$CHAT_ID" \
             -d text="Pipeline $STATUS:
           
-          Init Terra: ${{ steps.init_terra.outcome }}
-          Apply Terra: ${{ steps.apply_terra.outcome }}
+          Init Terra: $INIT_STATUS
+          Apply Terra: $APPLY_STATUS
           Status: ${{ job.status }}
           
           Instance ip: ${{env.INSTANCE_IP}}"
