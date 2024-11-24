@@ -30,14 +30,20 @@ jobs:
       - name: Apply Terraform
         working-directory: terraform/
         env:
-          TF_LOG: ERROR
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         id: apply_terra
         run: |
           terraform apply -var "aws_access_key_id=${{ secrets.AWS_ACCESS_KEY }}" -var "aws_secret_access_key=${{ secrets.AWS_SECRET_KEY }}" -auto-approve
-          echo INSTANCE_IP=$(terraform output -raw public_ip) >> $GITHUB_ENV
 
+      - name: Get Public IP
+        id: get_ip
+        working-directory: terraform/
+        env:
+          TF_LOG: ERROR
+        run: |
+          INSTANCE_IP=$(terraform output -raw public_ip | sed 's/::debug.*//')
+          echo "INSTANCE_IP=$INSTANCE_IP" >> $GITHUB_ENV
 
       - name: Notify Telegram
         if: always()
