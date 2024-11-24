@@ -39,7 +39,7 @@ jobs:
       - name: Get Instance Name
         id: get_instance_name
         run: |
-          INSTANCE_NAME=$(terraform output -raw instance_name)
+          INSTANCE_NAME=$(terraform output -raw instance_name | tr -d '\n' | tr -d '\r')
           echo "INSTANCE_NAME=$INSTANCE_NAME" >> $GITHUB_ENV
 
       - name: Notify Telegram
