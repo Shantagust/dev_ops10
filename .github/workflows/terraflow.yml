@@ -13,6 +13,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Set TF_LOG to ERROR (disable debug output)
+        run: |
+          echo "TF_LOG=ERROR" >> $GITHUB_ENV
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
