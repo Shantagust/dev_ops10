@@ -40,6 +40,8 @@ resource "aws_instance" "web" {
               #!/bin/bash
               sudo apt-get update -y
               sudo apt-get install -y nginx
+              curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+              sudo apt-get install -y nodejs
               sudo systemctl start nginx
               sudo systemctl enable nginx
               EOF
