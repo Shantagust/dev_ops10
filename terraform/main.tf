@@ -33,7 +33,7 @@ resource "aws_security_group" "web" {
 }
 
 resource "aws_instance" "web" {
-  ami           = "ami-0b675654100345f49"
+  ami           = "ami-0e86f1546b3ee62b8"
   instance_type = "t2.micro"
   vpc_security_group_ids = [aws_security_group.web.id]
   user_data = <<-EOF
